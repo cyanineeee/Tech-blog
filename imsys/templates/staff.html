@@ -1,0 +1,133 @@
+{% extends 'nav.html'%}
+{% load static %}
+{% block nav %}
+    <div>
+        <div class="container">
+            <a href="{% url 'cake:staff_add' %}">
+                <button type="button" class="btn btn-primary btn-success" style="margin-top: 10px;margin-bottom: 10px;">
+                    添加新职员
+                </button>
+            </a>
+            <table class="table table-hover table-bordered" style="background-color: beige;">
+                <caption class="caption-top">员工名单</caption>
+                
+                <thead>
+                    <th scope="col">#</th>
+                    <th scope="col">员工姓名</th>
+                    <th scope="col">员工年龄</th>
+                    <th scope="col">性别</th>
+                    <th scope="col">电话号码</th>
+                    <th scope="col">入职时间</th>
+                    <th  scope="col" colspan="2">操作</th>
+
+                </thead>
+                <tbody>
+                    {% if page_queryset %}
+                    {% for staff in page_queryset %}
+                    <tr>
+                        <th>{{staff.id}}</th>
+                        <td>{{staff.name}}</td>
+                        <td>{{staff.age}}</td>
+                        <td>{{staff.get_gender_display}}</td>
+                        <td>{{staff.phonenumber}}</td>
+                        <td>{{staff.create_time | date:'Y-m-d'}}</td>
+                        <td><a href="{% url 'cake:staff_edit' staff.id %}"><button type="button " class="btn btn-warning btn-sm">修改信息</button></a></td>
+                        <td><button uid="{{staff.id}}" type="button" class="btn btn-danger btn-sm delete-btn">删除</button> </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <th>编号</th>
+                        <td>No Data</td>
+                        <td>No Data</td>
+                        <td>No Data</td>
+                        <td>No Data</td>
+                        <td>No Data</td>
+                        <td><a href="#">修改</a></td>
+                        <td><a href="#">删除</a></td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table> 
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end">
+                {% if page_html_str %}
+                {{page_html_str}}
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link disabled">前一页</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="?page=1">1</a></li>
+                    <li class="page-item">
+                    <a class="page-link disabled">后一页</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- 删除Modal -->
+    <div class="modal" tabindex="-1" id="delete-modal" style="border-color: red;">
+        <div class="modal-dialog modal-dialog-centered" >
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">删除</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p >真的要删除吗？一旦删除无法复原。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" id="confirm-btn" class="btn btn-primary btn-danger">删除</button>
+            </div>
+            </div>
+        </div>
+    </div>
+{% endblock nav %}
+
+
+{% block js %}
+<script>
+    $(function() {
+        var nid;
+        btnDelete();
+        confirmDelete();
+    })
+
+
+     function btnDelete () {
+            $('.delete-btn').click(function() {
+                $('#delete-modal').modal('show');
+                //获取当前元素行的id
+                nid = $(this).attr('uid') //自定义的id
+                // console.log(nid);
+            })
+        }
+
+    function confirmDelete(){
+        $('#confirm-btn').click(() => {
+            //确认删除 将要删除的id发送到后台
+            $.ajax({
+                url :'delete/'+nid+'/',
+                type : 'GET',
+                success : function(data) {
+                    if (data.status){
+                        alert('删除成功');
+                        location.reload();
+                    }else{
+                        console.log(data.errors)
+                    }
+                }
+            })
+            
+        })
+    }
+</script>
+{% endblock %}

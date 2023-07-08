@@ -1,0 +1,211 @@
+{% extends 'nav.html'%}
+{% load static %}
+{% block nav %}
+<div class="container" style="margin-top: 15px;">
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary btn-success" id="btn-ajax" style="margin-bottom: 10px;">添加新的订单信息</button>
+        </div>
+        <div class="col">
+        <form class="d-flex" role="search" method="get">
+            {% csrf_token %}
+            <input class="form-control me-2" type="search" name="custom" placeholder="搜索商品...." aria-label="Search">
+            <button class="btn btn-outline-success" type="submit" style='white-space:nowrap'>搜索订单</button>
+          </form>
+        </div>
+    </div>
+    <table class="table table-hover table-bordered" style="background-color: beige;">                
+            <thead>
+                <th scope="col">#</th>
+                <th scope="col">
+                    订单产生时间
+                </th>
+                <th scope="col">订单预定时间</th>
+                <th scope="col">订单结束时间</th>
+                <th scope="col">顾客信息</th>
+                <th scope="col">订单金额</th>
+                <th scope="col">商品名字</th>
+                <th scope="col">订单状态</th>
+                <th  scope="col" colspan="2">操作</th>
+            </thead>
+            <tbody>
+                {% if page_queryset %}
+                {% for order in page_queryset %}
+                <tr>
+                    <th >{{ order.id }}</th>
+                    <td>{{order.starttime | date:'Y-m-d H:i:s'}}</td>
+                    <td>{{order.presettime | date:'Y-m-d H:i:s'}}</td>
+                    <td>{{order.endtime | date:'Y-m-d H:i:s'}}</td>
+                    <td>{{order.customer}}</td>
+                    <td>{{order.amount}}</td>
+                    <td>{{order.commodity}}</td>
+                    <td>{{order.get_status_display}}</td>
+                    <td><a href="{% url 'cake:order_edit' order.id %}"><button type="button " class="btn btn-warning btn-sm">修改信息</button></a></td>
+                    <td><button uid="{{order.id}}" type="button" class="btn btn-danger btn-sm delete-btn">删除</button> </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <th>编号</th>
+                    <td>No Data</td>
+                    <td>No Data</td>
+                    <td>No Data</td>
+                    <td>No Data</td>
+                    <td>No Data</td>
+                    <td>No Data</td>
+                    <td>No Data</td> 
+                    <td><a href=#>修改</a></td>
+                    <td><a href=#>删除</a></td>
+                </tr>
+                {% endif %}
+            </tbody>
+    </table> 
+    <nav aria-label="Page navigation example">
+
+        <ul class="pagination justify-content-end">
+
+        {% if page_html_str %}
+        {{page_html_str}}
+        {% else %}
+        <li class="page-item">
+            <a class="page-link disabled">前一页</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="?page=1">1</a></li>
+            <li class="page-item">
+            <a class="page-link disabled">后一页</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+
+        <!-- 添加Modal -->
+    <div class="modal fade " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">新建</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-order-ajax">
+                    {% csrf_token %}
+                    {% for field in order_form %}
+                    <div class="mb-3">
+                        <label class="form-label">{{field.label}}</label>
+                        {{ field }}
+                        <span class="error-msg" style="color:red"></span>  <!-- 错误信息展示 -->
+                    </div>
+                    {% endfor %}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="btn-save">确认新建</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除Modal -->
+    <div class="modal" tabindex="-1" id="delete-modal" style="border-color: red;">
+        <div class="modal-dialog modal-dialog-centered" >
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">删除</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+        
+                <p>真的要删除吗？一旦删除无法复原。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" id="confirm-btn" class="btn btn-primary btn-danger">删除</button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock nav %}
+{% block js %}
+<script>
+    $(function () {
+        var nid;
+
+        bindBtn();
+        bindBtnSave();
+        btnDelete();
+        confirmDelete();
+    })
+
+    function bindBtn() {
+        $('#btn-ajax').click(function() {
+            $('#exampleModal').modal('show');
+        })
+    }
+    
+    function bindBtnSave (){
+        $('#btn-save').click(() => {
+            //更新错误信息
+            $('.error-msg').empty();
+
+            // alert('save!');
+            $.ajax({
+                url :'add/',
+                type:'post',
+                data : $('#add-order-ajax').serialize(),
+                dataType : 'JSON',
+                success : function(data){
+                        console.log(data);
+                        if (data.status){
+                            //添加成功
+                            alert('成功！');
+                            //清空表单
+                            $('#add-order-ajax')[0].reset();
+                            //关闭对话框
+                            $('#exampleModal').modal('hide');
+                            //刷新页面
+                            location.reload();
+
+                        }else{
+                            $.each(data.error,function(name,errorlst){
+                                $('#id_'+name).next().text(errorlst[0])
+                            })
+                        }
+                }
+
+            })
+        })
+    }
+
+    function btnDelete () {
+            $('.delete-btn').click(function() {
+                $('#delete-modal').modal('show');
+                //获取当前元素行的id
+                nid = $(this).attr('uid') //自定义的id
+                // console.log(nid);
+            })
+        }
+
+    function confirmDelete(){
+        $('#confirm-btn').click(() => {
+            //确认删除 将要删除的id发送到后台
+            $.ajax({
+                url :'delete/'+nid+'/',
+                type : 'GET',
+                success : function(data) {
+                    if (data.status){
+                        alert('删除成功');
+                        location.reload();
+                    }else{
+                        console.log(data.errors)
+                    }
+                }
+            })
+            
+        })
+    }
+       
+</script>
+{% endblock %}

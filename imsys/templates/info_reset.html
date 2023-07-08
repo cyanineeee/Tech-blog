@@ -1,0 +1,30 @@
+{% extends 'nav.html'%}
+
+{% block nav %}
+<div style="width:50%;margin-left: 25%;margin-top: 25px;">
+    <div class="container" >
+        <form method="post">
+            <h2>重置密码 </h2>
+            <div class="container">
+                <figure class="text-end">
+                    <blockquote class="blockquote">
+                      <p>账号 - {{ user_name }}</p>
+                    </blockquote>
+                    <figcaption class="blockquote-footer">
+                        所属员工 - {{ user_identify }}
+                    </figcaption>
+                  </figure>
+            </div>
+            {% csrf_token %}
+            {% for field in user_info %}
+            <div class="mb-3">
+                <label class="form-label">{{field.label}}</label>
+                {{ field }}
+                <span style="color:red">{{field.errors.0}}</span>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">确认</button>
+        </form>
+    </div>    
+</div>
+{% endblock nav %}

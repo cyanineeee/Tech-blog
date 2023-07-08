@@ -1,0 +1,45 @@
+{% extends 'nav.html'%}
+{% load static %}
+{% block css %}
+
+<link rel="stylesheet" href="{% static '\datetimepicker\css\bootstrap-datepicker.css' %}"> </script>
+<link rel="stylesheet" href="{% static '\datetimepicker\css\bootstrap-datepicker.min.css' %}"> </script>
+
+{% endblock %}
+
+{% block nav %}
+<div style="width:50%;margin-left: 25%;margin-top: 25px;">
+    <div class="container" >
+        <form method="post" novalidate >
+            <h2>修改订单信息</h2>
+            {% csrf_token %}
+            {% for field in order_edit_form %}
+            <div class="mb-3">
+                <label class="form-label">{{field.label}}</label>
+                {{ field }}
+                <span style="color:red">{{field.errors.0}}</span>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">确认修改</button>
+        </form>
+    </div>    
+</div>
+
+{% block js %}
+<script src="{% static '\datetimepicker\js\bootstrap-datepicker.js' %}"> </script>
+<script src="{% static '\datetimepicker\js\bootstrap-datepicker.min.js' %}"> </script>
+
+{% endblock %}
+<script>
+// function changeDatetimeInput(id){
+//     var time = $(`#${id}`).val().replaceAll('/','-');
+//     $(`#${id}`).attr('type','datetime-local');
+//     $(`#${id}`).val(time)
+// }
+// changeDatetimeInput('id_presettime');
+// changeDatetimeInput('id_endtime');
+</script>
+{% endblock nav %}
+
+
+

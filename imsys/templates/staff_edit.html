@@ -1,0 +1,38 @@
+{% extends 'nav.html'%}
+{% load static %}
+{% block nav %}
+<div style="width:50%;margin-left: 25%;margin-top: 25px;">
+    <div class="container" >
+        <form method="post">
+            <h2>添加新的员工信息</h2>
+            {% csrf_token %}
+            {% for field in staff_edit_form %}
+            <div class="mb-3">
+                <label class="form-label">{{field.label}}</label>
+                {{ field }}
+                <span style="color:red">{{field.errors.0}}</span>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">确认添加</button>
+        </form>
+    </div>    
+</div>
+
+
+{% block js %}
+<script src="{% static '\bootstrap-datetimepicker.min.js' %}"> </script>
+<script src="{% static '\bootstrap-datetimepicker.js' %}"> </script>
+
+{% endblock %}
+<script>
+$('#id_create_time').datetimepicker({
+    bootcssVer:5.3,
+    format: 'yyyy-mm-dd',
+    language: 'zh-CN',
+    todayHighlight:true,//当天日期高亮
+    minView:'month', //选择最精确的时间视图 最小/默认为为hour
+    autoclose:true,//选择完之后就自动关闭
+    pickerPosition:'top'
+});
+</script>
+{% endblock nav %}

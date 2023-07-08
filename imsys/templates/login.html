@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">   
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100%;
+        }
+        .my-container {
+            height: 100%;
+            background-image: linear-gradient(to right, #fbc2eb, #a6c1ee);
+        }
+        .my-login-wrapper {
+            background-color: #fff;
+            width: 358px;
+            height: 588px;
+            border-radius: 15px;
+            padding: 0 50px;
+            position: relative;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+		.my-title{
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 100px;
+		}
+        .my-header {
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 100px;
+			width: 100%;
+        }
+        .my-input-item {
+            display: block;
+			border-radius: 15px;
+            width: 100%;
+			margin-top: 15px;
+            margin-bottom: 20px;
+            border: 0;
+            padding: 10px;
+            border-bottom: 1px solid rgb(128, 125, 125);
+            font-size: 15px;
+            outline: none;
+			padding:10px 0;
+			text-indent:10px
+        }
+        .my-input-item:placeholder {
+			border-radius: 15px;
+            text-transform: uppercase;
+        }
+        .my-btn {
+            text-align: center;
+            padding: 10px;
+            width: 30%;
+            background-image: linear-gradient(to right, #a6c1ee, #fbc2eb);
+            color: #fff;
+            border:0;
+			border-radius: 15px;
+        }
+        .my-msg {
+            text-align: center;
+            line-height: 88px;
+        }
+        a {
+            text-decoration-line: none;
+            color: #abc1ee;
+        }
+        .my-row{
+            display:flex;
+            justify-content:space-between;
+        }
+    </style>
+</head>
+<body> 
+    <div class="nav">
+
+    </div>
+    <div class="my-container">
+        <div>
+            <a href="/" style="color:white"><button style="border-radius: 3px;border-color: white;"><h2>back</h2></button></a>
+        </div>
+        <div class="my-login-wrapper">
+			<div class="my-title">蛋糕店管理系统Demo</div>
+            <div class="my-header">登录</div> 
+				<form method="POST" action='{% url "cake:login" %}'> 
+					{% csrf_token %}
+                    {{form.name.label}}
+                    {{form.name}}
+                    <div>
+                        {{form.name.errors.0}}
+                    </div>
+                    {{form.password.label}}
+                    {{form.password}}
+                    <div>
+                        {{form.password.errors.0}}
+                    </div>
+                    <div class="my-row" >
+                        <div>
+                    {{form.code}}
+                    <span style="color:red">{{form.code.errors.0}}</span>
+                        </div>
+                        <div>
+                            <img src="{% url 'cake:check_code' %}">
+                        </div>
+                    </div>
+                    <button class="my-btn" type="submit">确认登陆</button>					
+                </form>
+            <div class="my-msg">
+                还没有帐号？
+                <a href="{% url 'cake:register' %}">注册</a>
+            </div> 
+        </div>
+    </div>
+</body>
+
+</html>

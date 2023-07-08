@@ -24,8 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-b2c$_w-!x&45_n+@rye7cekz=twf*=30g&qu9vfh%clp3jl1+g"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -80,28 +80,28 @@ WSGI_APPLICATION = "imsys.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # 本地
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.mysql", #设置mysql
-#         'USER': "root", #登陆用户名
-#         'NAME':'cyanine', #数据库名称
-#         "PASSWORD": "123456", #密码
-#         "HOST" : "127.0.0.1", 
-#         "PORT" : "3306",
-#     }
-# }
-
-# 服务器
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql", #设置mysql
         'USER': "root", #登陆用户名
         'NAME':'cyanine', #数据库名称
-        "PASSWORD": "ma20011226", #密码
+        "PASSWORD": "123456", #密码
         "HOST" : "127.0.0.1", 
         "PORT" : "3306",
     }
 }
+
+# 服务器
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql", #设置mysql
+#         'USER': "root", #登陆用户名
+#         'NAME':'cyanine', #数据库名称
+#         "PASSWORD": "ma20011226", #密码
+#         "HOST" : "127.0.0.1", 
+#         "PORT" : "3306",
+#     }
+# }
 
 
 
